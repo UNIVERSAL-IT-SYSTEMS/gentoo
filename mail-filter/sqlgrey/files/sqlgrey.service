@@ -3,7 +3,19 @@ Description=SQLgrey Postfix Grey-listing Policy service
 After=network.target
 
 [Service]
+User=sqlgrey
+Group=sqlgrey
 ExecStart=/usr/sbin/sqlgrey
+PermissionsStartOnly=true
+ExecStartPre=/usr/bin/touch /run/sqlgrey.pid && /bin/chown sqlgrey:sqlgrey /run/sqlgrey.pid
+CapabilityBoundingSet=
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=full
+ProtectHome=yes
+NoNewPrivileges=yes
+PIDFile=/run/sqlgrey.pid
+MemoryDenyWriteExecute=true
 
 [Install]
 WantedBy=multi-user.target
