@@ -1,0 +1,7 @@
+# Copyright 1999-2016 Gentoo Foundation.
+# Distributed under the terms of the GNU General Public License, v2
+# $Id$
+
+# This package is currently masked in the global package.mask, but we need it
+# in this profile.
+=sys-devel/llvm-3.8.1-r1

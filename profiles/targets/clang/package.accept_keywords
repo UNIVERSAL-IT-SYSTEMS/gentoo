@@ -1,0 +1,10 @@
+# Copyright 1999-2016 Gentoo Foundation.
+# Distributed under the terms of the GNU General Public License, v2
+# $Id$
+
+# we need the latest version of these packages
+sys-devel/llvm ~amd64
+sys-devel/clang ~amd64
+sys-libs/libcxx ~amd64
+sys-libs/libcxxrt ~amd64
+sys-libs/llvm-libunwind ~amd64
