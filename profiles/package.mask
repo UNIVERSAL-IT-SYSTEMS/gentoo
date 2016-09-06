@@ -30,6 +30,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Since 6.0, Profile Sync Daemon developers removed all non-systemd
+# support, so it won't be compatible with any other init that's not systemd.
+# If you're using SystemD, you can unmask this package.
+>=www-misc/profile-sync-daemon-6.0
+
 # Hanno Böck <hanno@gentoo.org> (14 Oct 2016)
 # Both haven't been updated in years and are likely not
 # usable in their current form in the tree. Upstream
@@ -130,7 +135,7 @@ media-gfx/skencil
 net-wireless/chillispot
 
 # Pacho Ramos <pacho@gentoo.org> (08 Oct 2016)
-# Fails to build (#515294), nothing needs it, relies on obsolete capi4kutils. 
+# Fails to build (#515294), nothing needs it, relies on obsolete capi4kutils.
 # Removal in a month.
 net-dialup/fcpci
 
