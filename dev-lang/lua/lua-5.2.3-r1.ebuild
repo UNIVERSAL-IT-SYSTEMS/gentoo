@@ -101,7 +101,7 @@ multilib_src_compile() {
 			RPATH="${EPREFIX}/usr/$(get_libdir)/" \
 			LUA_LIBS="${mylibs}" \
 			LIB_LIBS="${liblibs}" \
-			V=$(get_version_component_range 1-2) \
+			V=${SLOT} \
 			gentoo_all
 }
 
