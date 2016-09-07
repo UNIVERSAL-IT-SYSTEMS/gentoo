@@ -1,10 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI=5
 
-inherit eutils autotools multilib multilib-minimal portability toolchain-funcs versionator
+inherit eutils autotools multilib multilib-minimal portability toolchain-funcs
 
 DESCRIPTION="A powerful light-weight programming language designed for extending applications"
 HOMEPAGE="http://www.lua.org/"
@@ -15,7 +15,7 @@ SLOT="5.2"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~arm-linux ~x86-linux ~ppc-aix ~x64-freebsd ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 IUSE="+deprecated emacs readline static"
 
-RDEPEND="readline? ( sys-libs/readline )
+RDEPEND="readline? ( sys-libs/readline:0 )
 	app-eselect/eselect-lua
 	!dev-lang/lua:0"
 DEPEND="${RDEPEND}
@@ -27,9 +27,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 src_prepare() {
-	local PATCH_PV=$(get_version_component_range 1-2)
-
-	epatch "${FILESDIR}"/${PN}-${PATCH_PV}-make-r1.patch
+	epatch "${FILESDIR}"/${PN}-${SLOT}-make-r1.patch
 
 	# use glibtool on Darwin (versus Apple libtool)
 	if [[ ${CHOST} == *-darwin* ]] ; then
@@ -103,7 +101,7 @@ multilib_src_compile() {
 			RPATH="${EPREFIX}/usr/$(get_libdir)/" \
 			LUA_LIBS="${mylibs}" \
 			LIB_LIBS="${liblibs}" \
-			V=$(get_version_component_range 1-2) \
+			V=${SLOT} \
 			gentoo_all
 }
 
@@ -112,16 +110,15 @@ multilib_src_install() {
 			V=${SLOT} gentoo_install
 
 	# We want packages to find our things...
-	cp "${FILESDIR}/lua.pc" "${WORKDIR}"
-	sed -i \
+	sed \
 		-e "s:^prefix= :prefix= ${EPREFIX}:" \
-		-e "s:^V=.*:V= ${PATCH_PV}:" \
+		-e "s:^V=.*:V= ${SLOT}:" \
 		-e "s:^R=.*:R= ${PV}:" \
 		-e "s:/,lib,:/$(get_libdir):g" \
-		"${WORKDIR}/lua.pc"
-
+		-e "s:/,include,:/include/lua${SLOT}:g" \
+		"${FILESDIR}/lua.pc" > "${WORKDIR}/lua-$(get_libdir).pc"
 	insinto "/usr/$(get_libdir)/pkgconfig"
-	newins "${WORKDIR}/lua.pc" "lua${SLOT}.pc"
+	newins "${WORKDIR}/lua-$(get_libdir).pc" "lua${SLOT}.pc"
 }
 
 multilib_src_install_all() {
