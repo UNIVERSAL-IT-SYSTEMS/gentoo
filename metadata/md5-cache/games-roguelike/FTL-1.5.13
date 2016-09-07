@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare setup unpack
+DESCRIPTION=Faster Than Light: A spaceship simulation real-time roguelike-like game
+EAPI=5
+HOMEPAGE=http://www.ftlgame.com/
+IUSE=bundled-libs
+KEYWORDS=-* amd64 x86
+LICENSE=all-rights-reserved Boost-1.0 free-noncomm MIT bundled-libs? ( FTL LGPL-2.1 ZLIB libpng )
+RDEPEND=sys-devel/gcc[cxx] virtual/opengl !bundled-libs? ( media-libs/devil[png] media-libs/freetype:2 media-libs/libsdl[X,sound,joystick,opengl,video] sys-libs/zlib ) games-misc/games-envd
+RESTRICT=fetch bindist splitdebug
+SLOT=0
+SRC_URI=FTL.1.5.13.tar.gz
+_eclass_exported_funcs=pkg_preinst:games pkg_postinst:games pkg_setup:games src_unpack:base src_prepare:- src_configure:games src_compile:games src_install:-
+_eclasses_=base	3fe4f8980633fd7bc69e9887209ba2fe	eutils	b83a2420b796f7c6eff682679d08fe25	games	2cf0d67d765e6358b435ccda30c13ad8	multilib	165fc17c38d1b11dac2008280dab6e80	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	80aaa71614ced86f02ee1a513821dc87
+_md5_=e1da7c9f3434b8babce3b1198b60613d
