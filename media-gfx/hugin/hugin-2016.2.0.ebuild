@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 WX_GTK_VER="3.0"
-PYTHON_COMPAT=( python{2_7,3_3,3_4} )
+PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} )
 
 inherit python-single-r1 wxwidgets versionator cmake-utils
 
@@ -18,7 +18,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 
 LANGS=" ca ca-valencia cs da de en-GB es eu fi fr hu it ja nl pl pt-BR ro ru sk sv zh-CN zh-TW"
-IUSE="debug lapack python sift $(echo ${LANGS//\ /\ l10n_})"
+IUSE="debug +doc lapack python sift $(echo ${LANGS//\ /\ l10n_})"
 
 CDEPEND="
 	!!dev-util/cocom
@@ -52,21 +52,33 @@ DEPEND="${CDEPEND}
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
+DOCS=( authors.txt README TODO )
+
 S=${WORKDIR}/${PN}-$(get_version_component_range 1-3)
 
 pkg_setup() {
-	DOCS="authors.txt README TODO"
-	mycmakeargs=(
-		-DBUILD_HSI=$(usex python ON OFF)
-		-DENABLE_LAPACK=$(usex lapack ON OFF)
-	)
 	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {
 	rm CMakeModules/{FindLAPACK,FindPkgConfig}.cmake || die
-
+	if ! use doc; then	# F1 help in GUI
+		sed -e "/ADD_SUBDIRECTORY.*help_en_EN/ s/^/#DONT/" \
+			-i src/hugin1/hugin/xrc/data/CMakeLists.txt || die
+	fi
+	if ! use doc || ! use l10n_it; then
+		sed -e "/ADD_SUBDIRECTORY.*help_it_IT/ s/^/#DONT/" \
+			-i src/hugin1/hugin/xrc/data/CMakeLists.txt || die
+	fi
 	cmake-utils_src_prepare
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DBUILD_HSI=$(usex python ON OFF)
+		-DENABLE_LAPACK=$(usex lapack ON OFF)
+	)
+	cmake-utils_src_configure
 }
 
 src_install() {
@@ -80,6 +92,8 @@ src_install() {
 			cs) dir=cs_CZ;;
 			*) dir=${lang/-/_};;
 		esac
-		use l10n_${lang} || rm -r "${D}"/usr/share/locale/${dir}
+		if ! use l10n_${lang} ; then
+			rm -r "${ED}"usr/share/locale/${dir} || die
+		fi
 	done
 }
