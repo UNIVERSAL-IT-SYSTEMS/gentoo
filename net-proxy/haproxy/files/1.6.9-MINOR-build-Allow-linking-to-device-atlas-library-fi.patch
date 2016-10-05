@@ -1,0 +1,28 @@
+From 01dc6e622c4eceab80c9bacd2ae2c1228a6791c4 Mon Sep 17 00:00:00 2001
+From: Bertrand Jacquin <bertrand@jacquin.bzh>
+Date: Thu, 6 Oct 2016 00:32:39 +0100
+Subject: [PATCH] MINOR: build: Allow linking to device-atlas library file
+
+DeviceAtlas might be installed in a location where a user might not have
+enough permissions to write json.o and dac.o
+---
+ Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 0ce4b325305c..a10d2e4c1040 100644
+--- a/Makefile
++++ b/Makefile
+@@ -622,8 +622,12 @@ endif
+ DEVICEATLAS_SRC =
+ DEVICEATLAS_INC = $(DEVICEATLAS_SRC)
+ DEVICEATLAS_LIB = $(DEVICEATLAS_SRC)
++ifeq ($(DEVICEATLAS_LIB),)
++OPTIONS_LDFLAGS += -lda
++else
+ OPTIONS_OBJS	+= $(DEVICEATLAS_LIB)/json.o
+ OPTIONS_OBJS	+= $(DEVICEATLAS_LIB)/dac.o
++endif
+ OPTIONS_OBJS	+= src/da.o
+ OPTIONS_CFLAGS += -DUSE_DEVICEATLAS $(if $(DEVICEATLAS_INC),-I$(DEVICEATLAS_INC))
+ BUILD_OPTIONS  += $(call ignore_implicit,USE_DEVICEATLAS)

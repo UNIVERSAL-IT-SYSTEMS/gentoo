@@ -4,17 +4,17 @@
 
 EAPI="6"
 
-inherit user versionator toolchain-funcs flag-o-matic systemd linux-info git-r3
+inherit user versionator toolchain-funcs flag-o-matic systemd linux-info
 
 MY_P="${PN}-${PV/_beta/-dev}"
 
 DESCRIPTION="A TCP/HTTP reverse proxy for high availability environments"
 HOMEPAGE="http://haproxy.1wt.eu"
-EGIT_REPO_URI="http://master.formilux.org/git/people/willy/haproxy.git"
+SRC_URI="http://haproxy.1wt.eu/download/$(get_version_component_range 1-2)/src/${MY_P}.tar.gz"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~ppc ~x86"
 IUSE="+crypt device-atlas doc examples libressl slz net_ns +pcre pcre-jit ssl tools vim-syntax +zlib" # lua
 REQUIRED_USE="pcre-jit? ( pcre )
 	device-atlas? ( pcre )
@@ -37,6 +37,7 @@ RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${MY_P}"
 
+PATCHES=( "${FILESDIR}/${PV}-MINOR-build-Allow-linking-to-device-atlas-library-fi.patch" )
 DOCS=( CHANGELOG CONTRIBUTING MAINTAINERS )
 
 haproxy_use() {
