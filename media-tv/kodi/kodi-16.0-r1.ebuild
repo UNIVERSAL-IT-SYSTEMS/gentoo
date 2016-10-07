@@ -10,7 +10,7 @@ PYTHON_REQ_USE="sqlite"
 
 inherit linux-info python-single-r1 multiprocessing autotools toolchain-funcs
 
-CODENAME="Krypton"
+CODENAME="Jarvis"
 case ${PV} in
 9999)
 	EGIT_REPO_URI="git://github.com/xbmc/xbmc.git"
@@ -32,7 +32,7 @@ HOMEPAGE="https://kodi.tv/ http://kodi.wiki/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="airplay alsa bluetooth bluray caps cec dbus debug gles java midi mysql nfs +opengl profile pulseaudio +samba sftp test +texturepacker udisks upnp upower +usb vaapi vdpau webserver +X zeroconf"
+IUSE="airplay alsa avahi bluetooth bluray caps cec css dbus debug gles java joystick midi mysql nfs +opengl profile pulseaudio rtmp +samba sftp test +texturepacker udisks upnp upower +usb vaapi vdpau webserver +X"
 # gles/vaapi: http://trac.kodi.tv/ticket/10552 #464306
 REQUIRED_USE="
 	|| ( gles opengl )
@@ -48,6 +48,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	app-arch/zip
 	app-i18n/enca
 	airplay? ( app-pda/libplist )
+	dev-libs/boost
 	dev-libs/expat
 	dev-libs/fribidi
 	dev-libs/libcdio[-minimal]
@@ -60,26 +61,32 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-libs/yajl-2
 	dev-python/simplejson[${PYTHON_USEDEP}]
 	media-fonts/corefonts
-	media-fonts/anonymous-pro
-	media-fonts/dejavu
+	media-fonts/roboto
 	alsa? ( media-libs/alsa-lib )
 	media-libs/flac
 	media-libs/fontconfig
 	media-libs/freetype
+	media-libs/jasper
 	media-libs/jbigkit
 	>=media-libs/libass-0.9.7
 	bluray? ( >=media-libs/libbluray-0.7.0 )
+	css? ( media-libs/libdvdcss )
 	media-libs/libmad
 	media-libs/libmodplug
+	media-libs/libmpeg2
 	media-libs/libogg
 	media-libs/libpng:0=
 	media-libs/libsamplerate
+	joystick? ( media-libs/libsdl2 )
 	>=media-libs/taglib-1.8
 	media-libs/libvorbis
+	media-libs/tiff:0=
 	media-sound/dcadec
 	pulseaudio? ( media-sound/pulseaudio )
 	media-sound/wavpack
-	>=media-video/ffmpeg-3:=[encode]
+	>=media-video/ffmpeg-2.6:=[encode]
+	rtmp? ( media-video/rtmpdump )
+	avahi? ( net-dns/avahi )
 	nfs? ( net-fs/libnfs:= )
 	webserver? ( net-libs/libmicrohttpd[messages] )
 	sftp? ( net-libs/libssh[sftp] )
@@ -89,11 +96,13 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	dbus? ( sys-apps/dbus )
 	caps? ( sys-libs/libcap )
 	sys-libs/zlib
+	virtual/jpeg:0=
 	usb? ( virtual/libusb:1 )
 	mysql? ( virtual/mysql )
 	opengl? (
 		virtual/glu
 		virtual/opengl
+		>=media-libs/glew-1.5.6:=
 	)
 	gles? (
 		media-libs/mesa[gles2]
@@ -109,9 +118,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		x11-libs/libXinerama
 		x11-libs/libXrandr
 		x11-libs/libXrender
-	)
-	zeroconf? ( net-dns/avahi )
-"
+	)"
 RDEPEND="${COMMON_DEPEND}
 	!media-tv/xbmc
 	udisks? ( sys-fs/udisks:0 )
@@ -139,7 +146,8 @@ Please consider enabling IP_MULTICAST under Networking options.
 "
 
 PATCHES=( "${FILESDIR}"/${PN}-9999-no-arm-flags.patch
-		"${FILESDIR}"/${PN}-9999-texturepacker.patch )
+		"${FILESDIR}"/${PN}-9999-texturepacker.patch
+		"${FILESDIR}"/${PN}-16-ffmpeg3.patch )
 
 pkg_setup() {
 	check_extra_config
@@ -230,18 +238,22 @@ src_configure() {
 		--with-ffmpeg=shared \
 		$(use_enable alsa) \
 		$(use_enable airplay) \
+		$(use_enable avahi) \
 		$(use_enable bluray libbluray) \
 		$(use_enable caps libcap) \
 		$(use_enable cec libcec) \
+		$(use_enable css dvdcss) \
 		$(use_enable dbus) \
 		$(use_enable debug) \
 		$(use_enable gles) \
+		$(use_enable joystick) \
 		$(use_enable midi mid) \
 		$(use_enable mysql) \
 		$(use_enable nfs) \
 		$(use_enable opengl gl) \
 		$(use_enable profile profiling) \
 		$(use_enable pulseaudio pulse) \
+		$(use_enable rtmp) \
 		$(use_enable samba) \
 		$(use_enable sftp ssh) \
 		$(use_enable usb libusb) \
@@ -251,8 +263,7 @@ src_configure() {
 		$(use_enable vaapi) \
 		$(use_enable vdpau) \
 		$(use_enable webserver) \
-		$(use_enable X x11) \
-		$(use_enable zeroconf avahi)
+		$(use_enable X x11)
 }
 
 src_compile() {
@@ -266,18 +277,17 @@ src_install() {
 	domenu tools/Linux/kodi.desktop
 	newicon media/icon48x48.png kodi.png
 
-	# Remove fontconfig settings that are used only on MacOSX.
+	# Remove fonconfig settings that are used only on MacOSX.
 	# Can't be patched upstream because they just find all files and install
 	# them into same structure like they have in git.
-	rm -rf "${ED}"/usr/share/kodi/system/players || die
+	rm -rf "${ED}"/usr/share/kodi/system/players/dvdplayer/etc || die
 
 	# Replace bundled fonts with system ones.
-	rm "${ED}"/usr/share/kodi/addons/skin.estouchy/fonts/DejaVuSans-Bold.ttf || die
-	dosym /usr/share/fonts/dejavu/DejaVuSans-Bold.ttf \
-		/usr/share/kodi/addons/skin.estouchy/fonts/DejaVuSans-Bold.ttf
-	rm "${ED}"/usr/share/kodi/addons/skin.estuary/fonts/AnonymousPro.ttf || die
-	dosym "/usr/share/fonts/anonymous-pro/Anonymous Pro.ttf" \
-		/usr/share/kodi/addons/skin.estuary/fonts/AnonymousPro.ttf
+	rm "${ED}"/usr/share/kodi/addons/skin.confluence/fonts/Roboto-* || die
+	dosym /usr/share/fonts/roboto/Roboto-Regular.ttf \
+		/usr/share/kodi/addons/skin.confluence/fonts/Roboto-Regular.ttf
+	dosym /usr/share/fonts/roboto/Roboto-Bold.ttf \
+		/usr/share/kodi/addons/skin.confluence/fonts/Roboto-Bold.ttf
 
 	python_domodule tools/EventClients/lib/python/xbmcclient.py
 	python_newscript "tools/EventClients/Clients/Kodi Send/kodi-send.py" kodi-send
