@@ -421,6 +421,25 @@ tc-has-openmp() {
 	return ${ret}
 }
 
+# @FUNCTION: tc-check-openmp
+# @DESCRIPTION:
+# Test for OpenMP support with the current compiler and error out with
+# a clear error message, telling the user how to rectify the missing
+# OpenMP support that has been requested by the ebuild.
+tc-check-openmp() {
+	if ! tc-has-openmp; then
+		ewarn "Your current compiler does not support OpenMP"
+
+		if tc-is-gcc; then
+			ewarn "Enable OpenMP support by building sys-devel/gcc with USE=\"openmp\"."
+		elif tc-is-clang; then
+			ewarn "OpenMP support in sys-devel/clang is provided by sys-libs/libomp."
+		fi
+
+		die "Active compiler does not have required support for OpenMP"
+	fi
+}
+
 # @FUNCTION: tc-has-tls
 # @USAGE: [-s|-c|-l] [toolchain prefix]
 # @DESCRIPTION:
