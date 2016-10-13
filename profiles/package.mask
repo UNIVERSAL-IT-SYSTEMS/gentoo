@@ -30,6 +30,16 @@
 
 #--- END OF EXAMPLES ---
 
+# Michael Palimaka <kensington@gentoo.org (13 Oct 2016)
+# Requires Plasma 4 which is being removed
+media-video/plasma-mediacenter:0
+net-misc/knemo:4
+x11-themes/crystal
+x11-themes/dekorator
+x11-themes/nitrogen
+x11-themes/skulpture
+x11-themes/smaragd
+
 # Michael Palimamka <kensington@gentoo.org> 12 Oct 2016)
 # Dead upstream. Requires dead and vulnerable qtwebkit4.
 # Consider www-client/qupzilla or www-client/otter instead.

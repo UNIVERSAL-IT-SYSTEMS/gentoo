@@ -5,6 +5,19 @@
 # This file requires >=portage-2.1.1
 # New entries go on top.
 
+# Michael Palimaka <kensington@gentoo.org (14 Oct 2016)
+# Requires Plasma 4 which is being removed
+app-office/calligre kde
+dev-util/kdevelop:4 gdbui
+kde-apps/okular kde
+net-p2p/kmldonkey plasma
+net-p2p/ktorrent plasma shutdown
+www-client/rekonq kde
+www-plugins/gnash kde
+x11-themes/bespin kde windeco
+x11-themes/qtcurve kde
+x11-wm/compiz kde
+
 # Johannes Huber <johu@gentoo.org> (29 Sep 2016)
 # No released version available
 kde-plasma/plasma-workspace prison
