@@ -1,0 +1,12 @@
+DEFINED_PHASES=-
+DESCRIPTION=Symlinks and syncs browser profile dirs to RAM.
+EAPI=6
+HOMEPAGE=https://wiki.archlinux.org/index.php/Profile-sync-daemon
+KEYWORDS=amd64 x86 arm
+LICENSE=MIT
+RDEPEND=app-shells/bash net-misc/rsync[xattr] sys-apps/systemd
+RESTRICT=mirror
+SLOT=0
+SRC_URI=https://github.com/graysky2/profile-sync-daemon/archive/v6.28.tar.gz -> profile-sync-daemon-6.28.tar.gz
+_eclass_exported_funcs=-
+_md5_=65f480c6151604d7aa0c3c15930a8147
