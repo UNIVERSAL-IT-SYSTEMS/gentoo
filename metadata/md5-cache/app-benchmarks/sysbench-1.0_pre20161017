@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=aio? ( dev-libs/libaio ) mysql? ( virtual/libmysqlclient )
+DESCRIPTION=System performance benchmark
+EAPI=6
+HOMEPAGE=https://github.com/akopytov/sysbench
+IUSE=aio mysql
+KEYWORDS=~amd64
+LICENSE=GPL-2
+RDEPEND=aio? ( dev-libs/libaio ) mysql? ( virtual/libmysqlclient )
+SLOT=0
+SRC_URI=https://github.com/akopytov/sysbench/archive/48124f838b00ff83a044fbf046a9d8d0b1602d90.zip -> sysbench-48124f838b00ff83a044fbf046a9d8d0b1602d90.zip
+_eclass_exported_funcs=src_prepare:- src_configure:- src_install:-
+_md5_=abc4d9dc54ac8642d73255650d19e96e
